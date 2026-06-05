@@ -22,6 +22,7 @@
 
         .admin-sidebar {
             width: var(--admin-sidebar-width);
+            max-width: calc(100vw - 1.5rem);
         }
 
         .admin-sidebar .nav-link {
@@ -47,8 +48,29 @@
         }
 
         @media (min-width: 992px) {
+            .admin-sidebar {
+                position: fixed;
+                inset: 0 auto 0 0;
+                z-index: 1040;
+                height: 100vh;
+                transform: none !important;
+                visibility: visible !important;
+            }
+
+            .admin-sidebar .offcanvas-body {
+                height: calc(100vh - 64px);
+                overflow-y: auto;
+            }
+
             .admin-content {
                 margin-left: var(--admin-sidebar-width);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .admin-content main {
+                flex: 1 0 auto;
             }
         }
 
