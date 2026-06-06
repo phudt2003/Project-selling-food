@@ -8,6 +8,8 @@ envsubst '${PORT} ${NGINX_CLIENT_MAX_BODY_SIZE}' \
     < /etc/nginx/templates/default.conf.template \
     > /etc/nginx/conf.d/default.conf
 
+nginx -t
+
 mkdir -p \
     storage/framework/cache/data \
     storage/framework/sessions \
