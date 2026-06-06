@@ -12,6 +12,7 @@ Bo cau hinh nay dung PHP 8.3, Nginx, PHP-FPM, Redis/Render Key Value cho cache v
 - `.render/start.sh`: entrypoint web, tao Nginx config, clear/cache Laravel config-route-view.
 - `.render/start-worker.sh`: entrypoint worker, chay `php artisan queue:work redis`.
 - `render.yaml`: Render Blueprint tao Web Service, Worker, Render Key Value va Render Postgres.
+- `.env.render.example`: mau bien moi truong production de doi chieu tren Render Dashboard.
 
 ## Deploy bang Render Blueprint
 
@@ -26,6 +27,7 @@ Bo cau hinh nay dung PHP 8.3, Nginx, PHP-FPM, Redis/Render Key Value cho cache v
 5. Khi Render hoi bien `sync: false`, nhap:
    - `APP_KEY`: tao bang `php artisan key:generate --show`.
    - `APP_URL`: URL Render hoac domain rieng, vi du `https://websitesellfood-web.onrender.com`.
+   - `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY`: thong tin MoMo sandbox/production.
 6. Deploy. `preDeployCommand: php artisan migrate --force` se tu dong migrate truoc khi Web Service start.
 
 ## Cau hinh thu cong tren Render Dashboard
@@ -52,6 +54,11 @@ APP_DEBUG=false
 APP_KEY=base64:...
 APP_URL=https://your-service.onrender.com
 LOG_CHANNEL=stderr
+LOG_LEVEL=error
+
+MOMO_PARTNER_CODE=<momo-partner-code>
+MOMO_ACCESS_KEY=<momo-access-key>
+MOMO_SECRET_KEY=<momo-secret-key>
 
 CACHE_DRIVER=redis
 QUEUE_CONNECTION=redis

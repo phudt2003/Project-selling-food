@@ -21,6 +21,12 @@ services:
         sync: false
       - key: LOG_CHANNEL
         value: stderr
+      - key: MOMO_PARTNER_CODE
+        sync: false
+      - key: MOMO_ACCESS_KEY
+        sync: false
+      - key: MOMO_SECRET_KEY
+        sync: false
       - key: CACHE_DRIVER
         value: redis
       - key: QUEUE_CONNECTION
