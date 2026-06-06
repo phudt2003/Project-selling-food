@@ -1,27 +1,87 @@
-FROM php:8.2-apache
+FROM node:20-bookworm-slim AS frontend
 
-RUN apt-get update && apt-get install -y \
-    zip unzip git libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql zip
+WORKDIR /app
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY package*.json ./
+RUN npm ci
+
+COPY resources ./resources
+COPY vite.config.js ./
+RUN npm run build
+
+FROM composer:2 AS vendor
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-scripts
+
+COPY . .
+RUN composer dump-autoload --optimize --no-dev
+
+FROM php:8.3-fpm-bookworm AS production
+
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    LOG_CHANNEL=stderr \
+    PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 
 WORKDIR /var/www/html
 
-COPY . .
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gettext-base \
+        git \
+        libicu-dev \
+        libpq-dev \
+        libzip-dev \
+        nginx \
+        supervisor \
+        unzip \
+        zip \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        intl \
+        opcache \
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
+        zip \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/pear
 
-RUN composer install --no-dev --optimize-autoloader
+COPY --from=vendor /app /var/www/html
+COPY --from=frontend /app/public/build /var/www/html/public/build
 
-RUN cp .env.example .env || true
-RUN php artisan key:generate || true
+COPY .render/php.ini /usr/local/etc/php/conf.d/zz-production.ini
+COPY .render/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY .render/nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY .render/start.sh /usr/local/bin/start-container
+COPY .render/start-worker.sh /usr/local/bin/start-worker
 
-RUN chown -R www-data:www-data storage bootstrap/cache
-
-RUN a2enmod rewrite
-
-COPY ./.render/apache.conf /etc/apache2/sites-available/000-default.conf
+RUN mkdir -p \
+        /var/lib/nginx/body \
+        /var/lib/nginx/fastcgi \
+        /var/log/supervisor \
+        /var/run/php \
+        storage/framework/cache/data \
+        storage/framework/sessions \
+        storage/framework/testing \
+        storage/framework/views \
+        storage/logs \
+    && chown -R www-data:www-data /var/www/html /var/lib/nginx /var/log/nginx /var/run/php \
+    && chmod +x /usr/local/bin/start-container /usr/local/bin/start-worker
 
 EXPOSE 10000
 
-CMD php artisan migrate --force || true && \
-    php -S 0.0.0.0:$PORT -t public
+CMD ["start-container"]
