@@ -18,7 +18,19 @@ RUN apt-get update \
         ca-certificates \
         curl \
         git \
+        libicu-dev \
+        libonig-dev \
+        libpq-dev \
+        libzip-dev \
         unzip \
+        zip \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        intl \
+        mbstring \
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
         zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -53,6 +65,7 @@ RUN apt-get update \
         gettext-base \
         git \
         libicu-dev \
+        libonig-dev \
         libpq-dev \
         libzip-dev \
         nginx \
@@ -62,6 +75,7 @@ RUN apt-get update \
     && docker-php-ext-install -j"$(nproc)" \
         bcmath \
         intl \
+        mbstring \
         opcache \
         pcntl \
         pdo_mysql \
