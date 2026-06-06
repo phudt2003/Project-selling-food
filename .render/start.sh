@@ -3,6 +3,7 @@ set -eu
 
 : "${PORT:=10000}"
 : "${NGINX_CLIENT_MAX_BODY_SIZE:=25m}"
+export PORT NGINX_CLIENT_MAX_BODY_SIZE
 
 envsubst '${PORT} ${NGINX_CLIENT_MAX_BODY_SIZE}' \
     < /etc/nginx/templates/default.conf.template \

@@ -23,6 +23,8 @@ services:
         value: stderr
       - key: PORT
         value: "10000"
+      - key: NGINX_CLIENT_MAX_BODY_SIZE
+        value: 25m
       - key: MOMO_PARTNER_CODE
         sync: false
       - key: MOMO_ACCESS_KEY
