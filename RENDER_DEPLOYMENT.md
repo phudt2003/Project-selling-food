@@ -74,8 +74,6 @@ DB_PASSWORD=<database password>
 
 REDIS_CLIENT=phpredis
 REDIS_URL=<Render Key Value internal Redis URL>
-REDIS_HOST=<Render Key Value internal host>
-REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_DB=0
 REDIS_CACHE_DB=1

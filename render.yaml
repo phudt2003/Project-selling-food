@@ -40,16 +40,6 @@ services:
           type: keyvalue
           name: websitesellfood-redis
           property: connectionString
-      - key: REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: websitesellfood-redis
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: websitesellfood-redis
-          property: port
       - key: REDIS_PASSWORD
         value: ""
       - key: REDIS_DB
@@ -123,16 +113,6 @@ services:
           type: keyvalue
           name: websitesellfood-redis
           property: connectionString
-      - key: REDIS_HOST
-        fromService:
-          type: keyvalue
-          name: websitesellfood-redis
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: keyvalue
-          name: websitesellfood-redis
-          property: port
       - key: REDIS_PASSWORD
         value: ""
       - key: REDIS_DB
