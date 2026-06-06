@@ -17,10 +17,12 @@ mkdir -p \
 
 chown -R www-data:www-data storage bootstrap/cache
 
-php artisan storage:link || true
-php artisan optimize:clear
-php artisan config:cache
-php artisan route:cache || echo "Route cache skipped; check for Closure routes."
-php artisan view:cache
+(
+    php artisan storage:link || true
+    php artisan optimize:clear || true
+    php artisan config:cache || true
+    php artisan route:cache || echo "Route cache skipped; check for Closure routes."
+    php artisan view:cache || true
+) &
 
 exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
