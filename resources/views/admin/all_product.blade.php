@@ -57,7 +57,7 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
-                                    <img src="{{ asset('uploads/product/'.$pro->product_image) }}" class="admin-product-img" alt="{{ $pro->product_name }}">
+                                    <img src="{{ product_image_url($pro->product_image ?? null) }}" class="admin-product-img" alt="{{ $pro->product_name }}">
                                     <div>
                                         <div class="fw-semibold">{{ $pro->product_name }}</div>
                                         <div class="small text-secondary">

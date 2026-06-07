@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Hash;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Carbon\Carbon;
+use Throwable;
 
 class CheckoutController extends Controller
 {
@@ -544,12 +545,24 @@ public function momo_napas_return(Request $request)
 
     public function login_checkout()
     {
-    $cate_product = DB::table('tbl_category_product')
-        ->where('category_status', '0')
-        ->orderby('category_id', 'desc')
-        ->get();
+        try {
+            $categories = DB::table('tbl_category_product')
+                ->where('category_status', '1')
+                ->orderBy('category_id', 'asc')
+                ->get();
 
-    return view('pages.checkout.login_checkout')->with('category', $cate_product);
+            $parent_categories = $categories->where('parent_id', 0)->values();
+            $category_children = $categories->where('parent_id', '!=', 0)->groupBy('parent_id');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            $parent_categories = collect();
+            $category_children = collect();
+        }
+
+        return view('pages.checkout.login_checkout')
+            ->with('parent_categories', $parent_categories)
+            ->with('category_children', $category_children);
     }
 
     // Hiển thị danh sách thanh toán

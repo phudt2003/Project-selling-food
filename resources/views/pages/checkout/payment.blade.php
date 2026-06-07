@@ -60,7 +60,7 @@
                     @foreach($content as $item)
                         <div class="list-group-item p-3">
                             <div class="d-flex gap-3">
-                                <img src="{{ asset('uploads/product/' . $item->options->image) }}"
+                                <img src="{{ product_image_url($item->options->image ?? null) }}"
                                      class="img-fluid rounded flex-shrink-0"
                                      style="width:72px; height:72px; object-fit:cover"
                                      alt="{{ $item->name }}">
@@ -102,7 +102,7 @@
                         <tr>
                             <td>
                                 <div class="d-flex align-items-center gap-3">
-                                    <img src="{{ asset('uploads/product/' . $item->options->image) }}"
+                                    <img src="{{ product_image_url($item->options->image ?? null) }}"
                                          class="img-fluid rounded"
                                          style="width:72px"
                                          alt="{{ $item->name }}">

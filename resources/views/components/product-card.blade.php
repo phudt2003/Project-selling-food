@@ -7,7 +7,7 @@
 
 <article class="card h-100 border-0 shadow-sm">
     <a href="{{ URL::to('/chi-tiet-san-pham/'.$product->product_id) }}" class="ratio ratio-4x3 bg-white">
-        <img src="{{ asset('uploads/product/' . $product->product_image) }}"
+        <img src="{{ product_image_url($product->product_image ?? null) }}"
              class="img-fluid object-fit-contain p-3"
              alt="{{ $product->product_name }}">
     </a>

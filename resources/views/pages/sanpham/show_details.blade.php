@@ -24,7 +24,7 @@
                     <div class="col-12 col-lg-5">
                         <div class="position-relative bg-white rounded border">
                             <div class="ratio ratio-4x3">
-                                <img src="{{ asset('uploads/product/'.$value->product_image) }}"
+                                <img src="{{ product_image_url($value->product_image ?? null) }}"
                                      class="img-fluid object-fit-contain p-3"
                                      alt="{{ $value->product_name }}">
                             </div>

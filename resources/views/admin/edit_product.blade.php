@@ -88,7 +88,7 @@
                         <h2 class="h5 mb-3">Hinh anh</h2>
                         <div class="row g-3 align-items-center">
                             <div class="col-12 col-md-4 col-xl-3">
-                                <img src="{{ asset('uploads/product/' . $pro->product_image) }}"
+                                <img src="{{ product_image_url($pro->product_image ?? null) }}"
                                      class="img-fluid rounded border bg-light"
                                      alt="{{ $pro->product_name }}">
                             </div>

@@ -22,7 +22,7 @@
                 <div class="col-12 col-sm-6 col-xl-3">
                     <article class="card h-100 border-0 shadow-sm">
                         <a href="{{ URL::to('/chi-tiet-san-pham/'.$item['id']) }}" class="ratio ratio-4x3 bg-white">
-                            <img src="{{ asset('uploads/product/'.$item['image']) }}"
+                            <img src="{{ product_image_url($item['image'] ?? null) }}"
                                  class="img-fluid object-fit-contain p-3"
                                  alt="{{ $item['name'] }}">
                         </a>
