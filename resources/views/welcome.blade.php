@@ -84,11 +84,9 @@
         ? ($shippingId ? URL::to('/checkout') : URL::to('/payment'))
         : URL::to('/login-checkout');
 
-    $parentCategories = DB::table('tbl_category_product')
-        ->where('category_status', '1')
-        ->where('parent_id', 0)
-        ->orderBy('category_id', 'asc')
-        ->get();
+    $layoutCategories = collect($category ?? $parent_categories ?? []);
+    $parentCategories = collect($parent_categories ?? $layoutCategories->where('parent_id', 0)->values());
+    $categoryChildren = collect($category_children ?? $layoutCategories->where('parent_id', '!=', 0)->groupBy('parent_id'));
 @endphp
 
 <header class="bg-white border-bottom sticky-top">
@@ -281,11 +279,7 @@
 
                     @foreach($parentCategories as $parent)
                         @php
-                            $children = DB::table('tbl_category_product')
-                                ->where('parent_id', $parent->category_id)
-                                ->where('category_status', '1')
-                                ->orderBy('category_id', 'asc')
-                                ->get();
+                            $children = collect($categoryChildren->get($parent->category_id, []));
                         @endphp
 
                         @if($children->isNotEmpty())

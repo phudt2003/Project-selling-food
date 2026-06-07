@@ -54,6 +54,9 @@ FROM php:8.3-fpm-bookworm AS production
 ENV APP_ENV=production \
     APP_DEBUG=false \
     LOG_CHANNEL=stderr \
+    CACHE_DRIVER=file \
+    SESSION_DRIVER=file \
+    QUEUE_CONNECTION=sync \
     PHP_OPCACHE_VALIDATE_TIMESTAMPS=0
 
 WORKDIR /var/www/html

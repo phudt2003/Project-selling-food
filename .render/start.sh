@@ -3,7 +3,16 @@ set -eu
 
 : "${PORT:=10000}"
 : "${NGINX_CLIENT_MAX_BODY_SIZE:=25m}"
-export PORT NGINX_CLIENT_MAX_BODY_SIZE
+: "${CACHE_DRIVER:=file}"
+: "${SESSION_DRIVER:=file}"
+: "${QUEUE_CONNECTION:=sync}"
+
+if [ -z "${APP_KEY:-}" ]; then
+    APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
+    echo "APP_KEY was not set; generated a temporary runtime key."
+fi
+
+export PORT NGINX_CLIENT_MAX_BODY_SIZE CACHE_DRIVER SESSION_DRIVER QUEUE_CONNECTION APP_KEY
 
 envsubst '${PORT} ${NGINX_CLIENT_MAX_BODY_SIZE}' \
     < /etc/nginx/templates/default.conf.template \
