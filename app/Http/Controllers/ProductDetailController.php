@@ -17,7 +17,7 @@ class ProductDetailController extends Controller
                 ->first();
 
             if (! $product) {
-                abort(404, 'San pham khong ton tai');
+                abort(404, 'Sản phẩm không tồn tại');
             }
 
             $related = DB::table('tbl_product')

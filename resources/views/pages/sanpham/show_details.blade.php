@@ -1,6 +1,6 @@
 @extends('welcome')
 
-@section('title', 'Fresh | Chi tiet san pham')
+@section('title', 'Fresh | Chi tiết sản phẩm')
 
 @section('content')
 @foreach($product_details as $value)
@@ -14,7 +14,7 @@
     <div class="d-grid gap-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ URL::to('/') }}">Trang chu</a></li>
+                <li class="breadcrumb-item"><a href="{{ URL::to('/') }}">Trang chủ</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ $value->product_name }}</li>
             </ol>
         </nav>
@@ -52,16 +52,16 @@
                             </div>
 
                             <div class="row g-2 small">
-                                <div class="col-12 col-sm-6"><span class="text-secondary">Ma ID:</span> {{ $value->product_id }}</div>
-                                <div class="col-12 col-sm-6"><span class="text-secondary">Tinh trang:</span> <span class="badge text-bg-success">Con hang</span></div>
-                                <div class="col-12 col-sm-6"><span class="text-secondary">Cong ty:</span> {{ $value->product_company }}</div>
-                                <div class="col-12 col-sm-6"><span class="text-secondary">Don vi:</span> {{ $value->product_unit }}</div>
+                                <div class="col-12 col-sm-6"><span class="text-secondary">Mã ID:</span> {{ $value->product_id }}</div>
+                                <div class="col-12 col-sm-6"><span class="text-secondary">Tình trạng:</span> <span class="badge text-bg-success">Còn hàng</span></div>
+                                <div class="col-12 col-sm-6"><span class="text-secondary">Công ty:</span> {{ $value->product_company }}</div>
+                                <div class="col-12 col-sm-6"><span class="text-secondary">Đơn vị:</span> {{ $value->product_unit }}</div>
                                 <div class="col-12 col-sm-6">
-                                    <span class="text-secondary">Ngay san xuat:</span>
+                                    <span class="text-secondary">Ngày sản xuất:</span>
                                     {{ $value->product_date ? \Carbon\Carbon::parse($value->product_date)->format('d/m/Y') : 'N/A' }}
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <span class="text-secondary">Ngay het han:</span>
+                                    <span class="text-secondary">Ngày hết hạn:</span>
                                     {{ $value->expiration_date ? \Carbon\Carbon::parse($value->expiration_date)->format('d/m/Y') : 'N/A' }}
                                 </div>
                             </div>
@@ -71,9 +71,9 @@
                                     @if($isFallback)
                                         <div class="card h-100">
                                             <div class="card-body d-grid gap-3">
-                                                <label for="qty" class="form-label">So luong</label>
+                                                <label for="qty" class="form-label">Số lượng</label>
                                                 <input id="qty" type="number" min="1" value="1" class="form-control" disabled>
-                                                <button type="button" class="btn btn-success" disabled>Them vao gio</button>
+                                                <button type="button" class="btn btn-success" disabled>Thêm vào giỏ</button>
                                             </div>
                                         </div>
                                     @else
@@ -82,10 +82,10 @@
                                             <div class="card-body d-grid gap-3">
                                                 <input type="hidden" name="productid_hidden" value="{{ $value->product_id }}">
                                                 <div>
-                                                    <label for="qty" class="form-label">So luong</label>
+                                                    <label for="qty" class="form-label">Số lượng</label>
                                                     <input id="qty" type="number" name="qty" min="1" value="1" class="form-control" required>
                                                 </div>
-                                                <button type="submit" class="btn btn-success">Them vao gio</button>
+                                                <button type="submit" class="btn btn-success">Thêm vào giỏ</button>
                                             </div>
                                         </form>
                                     @endif
@@ -95,9 +95,9 @@
                                     @if($isFallback)
                                         <div class="card h-100">
                                             <div class="card-body d-grid gap-3">
-                                                <label for="weight" class="form-label">Khoi luong gram</label>
+                                                <label for="weight" class="form-label">Khối lượng gram</label>
                                                 <input id="weight" type="number" min="50" step="50" value="100" class="form-control" disabled>
-                                                <button type="button" class="btn btn-outline-success" disabled>Them theo gram</button>
+                                                <button type="button" class="btn btn-outline-success" disabled>Thêm theo gram</button>
                                             </div>
                                         </div>
                                     @else
@@ -106,10 +106,10 @@
                                             <div class="card-body d-grid gap-3">
                                                 <input type="hidden" name="productid_hidden" value="{{ $value->product_id }}">
                                                 <div>
-                                                    <label for="weight" class="form-label">Khoi luong gram</label>
+                                                    <label for="weight" class="form-label">Khối lượng gram</label>
                                                     <input id="weight" name="weight" type="number" min="50" step="50" value="100" class="form-control" required>
                                                 </div>
-                                                <button type="submit" class="btn btn-outline-success">Them theo gram</button>
+                                                <button type="submit" class="btn btn-outline-success">Thêm theo gram</button>
                                             </div>
                                         </form>
                                     @endif
@@ -126,11 +126,11 @@
                 <ul class="nav nav-tabs" id="productTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc-pane"
-                                type="button" role="tab" aria-controls="desc-pane" aria-selected="true">Mo ta</button>
+                                type="button" role="tab" aria-controls="desc-pane" aria-selected="true">Mô tả</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="content-tab" data-bs-toggle="tab" data-bs-target="#content-pane"
-                                type="button" role="tab" aria-controls="content-pane" aria-selected="false">Chi tiet</button>
+                                type="button" role="tab" aria-controls="content-pane" aria-selected="false">Chi tiết</button>
                     </li>
                 </ul>
                 <div class="tab-content pt-3">
@@ -148,8 +148,8 @@
 
 <section class="mt-5" aria-labelledby="related-products-title">
     <div class="mb-4">
-        <p class="text-success fw-semibold mb-1">Goi y them</p>
-        <h2 id="related-products-title" class="h3 fw-bold mb-0">San pham lien quan</h2>
+        <p class="text-success fw-semibold mb-1">Gợi ý thêm</p>
+        <h2 id="related-products-title" class="h3 fw-bold mb-0">Sản phẩm liên quan</h2>
     </div>
 
     <div class="row g-4">

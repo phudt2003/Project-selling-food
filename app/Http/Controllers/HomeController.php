@@ -55,7 +55,7 @@ class HomeController extends Controller
         $keywords = $request->keywords_submit;
 
         if (empty($keywords)) {
-            return redirect()->back()->with('message', 'Ban chua nhap tu khoa tim kiem');
+            return redirect()->back()->with('message', 'Bạn chưa nhập từ khóa tìm kiếm');
         }
 
         try {
@@ -78,7 +78,7 @@ class HomeController extends Controller
         return view('pages.sanpham.search')
             ->with('category', $cate_product)
             ->with('search_product', $search_product)
-            ->with('message', $search_product->isEmpty() ? 'Khong tim thay san pham' : null);
+            ->with('message', $search_product->isEmpty() ? 'Không tìm thấy sản phẩm' : null);
     }
 
     private function getHomeData(bool $limitProducts = true): array

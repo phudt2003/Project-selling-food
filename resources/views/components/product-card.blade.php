@@ -43,20 +43,20 @@
 
         <div class="mt-auto d-grid gap-2">
             @if($isFallback)
-                <button type="button" class="btn btn-success w-100" disabled>Them vao gio</button>
-                <button type="button" class="btn btn-outline-secondary w-100" disabled>Yeu thich</button>
+                <button type="button" class="btn btn-success w-100" disabled>Thêm vào giỏ</button>
+                <button type="button" class="btn btn-outline-secondary w-100" disabled>Yêu thích</button>
             @else
                 <form action="{{ URL::to('/save-cart') }}" method="POST">
                     @csrf
                     <input type="hidden" name="productid_hidden" value="{{ $product->product_id }}">
                     <input type="hidden" name="qty" value="1">
-                    <button type="submit" class="btn btn-success w-100">Them vao gio</button>
+                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ</button>
                 </form>
 
                 <form action="{{ route('wishlist.add') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                    <button type="submit" class="btn btn-outline-secondary w-100">Yeu thich</button>
+                    <button type="submit" class="btn btn-outline-secondary w-100">Yêu thích</button>
                 </form>
             @endif
         </div>
