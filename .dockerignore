@@ -9,6 +9,8 @@ storage/framework/cache/data/*
 storage/framework/sessions/*
 storage/framework/testing/*
 storage/framework/views/*
+bootstrap/cache/*.php
+bootstrap/cache/*.tmp
 tests
 README.md
 npm-debug.log

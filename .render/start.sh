@@ -7,6 +7,20 @@ set -eu
 : "${SESSION_DRIVER:=file}"
 : "${QUEUE_CONNECTION:=sync}"
 : "${RUN_DATABASE_SETUP:=true}"
+: "${DB_CONNECTION:=pgsql}"
+: "${DB_PORT:=5432}"
+
+if [ "${APP_ENV:-}" = "production" ]; then
+    if [ "$DB_CONNECTION" = "mysql" ]; then
+        DB_CONNECTION=pgsql
+        echo "APP_ENV=production; using DB_CONNECTION=pgsql."
+    fi
+
+    if [ "$DB_CONNECTION" = "pgsql" ] && [ "$DB_PORT" = "3306" ]; then
+        DB_PORT=5432
+        echo "PostgreSQL uses port 5432; overriding DB_PORT=3306."
+    fi
+fi
 
 if [ -z "${REDIS_URL:-}" ]; then
     if [ "$CACHE_DRIVER" = "redis" ]; then
@@ -30,7 +44,7 @@ if [ -z "${APP_KEY:-}" ]; then
     echo "APP_KEY was not set; generated a temporary runtime key."
 fi
 
-export PORT NGINX_CLIENT_MAX_BODY_SIZE CACHE_DRIVER SESSION_DRIVER QUEUE_CONNECTION APP_KEY RUN_DATABASE_SETUP
+export PORT NGINX_CLIENT_MAX_BODY_SIZE CACHE_DRIVER SESSION_DRIVER QUEUE_CONNECTION APP_KEY RUN_DATABASE_SETUP DB_CONNECTION DB_PORT
 
 envsubst '${PORT} ${NGINX_CLIENT_MAX_BODY_SIZE}' \
     < /etc/nginx/templates/default.conf.template \
@@ -46,6 +60,10 @@ mkdir -p \
     bootstrap/cache
 
 chown -R www-data:www-data storage bootstrap/cache
+
+php artisan optimize:clear || true
+
+echo "Database config: connection=$DB_CONNECTION host=${DB_HOST:-unset} port=${DB_PORT:-unset} database=${DB_DATABASE:-unset}"
 
 if [ "$RUN_DATABASE_SETUP" = "true" ]; then
     php artisan migrate --force || echo "Database migration failed; continuing startup."
