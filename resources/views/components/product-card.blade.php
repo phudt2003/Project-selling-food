@@ -43,7 +43,7 @@
 
         <div class="mt-auto d-grid gap-2">
             @if($isFallback)
-                <button type="button" class="btn btn-success w-100" disabled>Dang dong bo du lieu</button>
+                <button type="button" class="btn btn-success w-100" disabled>Them vao gio</button>
                 <button type="button" class="btn btn-outline-secondary w-100" disabled>Yeu thich</button>
             @else
                 <form action="{{ URL::to('/save-cart') }}" method="POST">

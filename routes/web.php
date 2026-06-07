@@ -9,9 +9,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\DatabaseSyncController;
 // =================== FRONTEND ====================
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/trang-chu', [HomeController::class, 'index']);
+Route::get('/_sync-database', DatabaseSyncController::class);
 Route::post('/tim-kiem', [HomeController::class, 'search']);
 
 // Khuyến mãi sốc
@@ -113,4 +115,3 @@ Route::post('/update-payment-status/{payment_id}', [CheckoutController::class, '
 // Revenue
 Route::get('/statistics-revenue', [StatisticsController::class, 'revenue'])->name('statistics.revenue');
 Route::post('/statistics-revenue/filter', [StatisticsController::class, 'filterRevenue'])->name('statistics.revenue.filter');
-
