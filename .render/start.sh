@@ -6,13 +6,14 @@ set -eu
 : "${CACHE_DRIVER:=file}"
 : "${SESSION_DRIVER:=file}"
 : "${QUEUE_CONNECTION:=sync}"
+: "${RUN_DATABASE_SETUP:=true}"
 
 if [ -z "${APP_KEY:-}" ]; then
     APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
     echo "APP_KEY was not set; generated a temporary runtime key."
 fi
 
-export PORT NGINX_CLIENT_MAX_BODY_SIZE CACHE_DRIVER SESSION_DRIVER QUEUE_CONNECTION APP_KEY
+export PORT NGINX_CLIENT_MAX_BODY_SIZE CACHE_DRIVER SESSION_DRIVER QUEUE_CONNECTION APP_KEY RUN_DATABASE_SETUP
 
 envsubst '${PORT} ${NGINX_CLIENT_MAX_BODY_SIZE}' \
     < /etc/nginx/templates/default.conf.template \
@@ -28,6 +29,11 @@ mkdir -p \
     bootstrap/cache
 
 chown -R www-data:www-data storage bootstrap/cache
+
+if [ "$RUN_DATABASE_SETUP" = "true" ]; then
+    php artisan migrate --force || echo "Database migration failed; continuing startup."
+    php artisan db:seed --force || echo "Database seeding failed; continuing startup."
+fi
 
 (
     php artisan storage:link || true
