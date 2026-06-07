@@ -6,7 +6,7 @@ services:
     region: singapore
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    preDeployCommand: php artisan migrate --force
+    preDeployCommand: php artisan migrate --force && php artisan db:seed --force
     healthCheckPath: /healthz
     envVars:
       - key: APP_NAME
