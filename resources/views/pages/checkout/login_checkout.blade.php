@@ -17,16 +17,26 @@
                     @csrf
                     <div>
                         <label for="email-account" class="form-label">Email</label>
-                        <input id="email-account" type="email" name="email_account" class="form-control" required autocomplete="email">
+                        <input id="email-account" type="email" name="email_account"
+                               class="form-control @error('email_account') is-invalid @enderror"
+                               value="{{ old('email_account') }}" required autocomplete="email">
+                        @error('email_account')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div>
                         <label for="password-account" class="form-label">Mật khẩu</label>
-                        <input id="password-account" type="password" name="password_account" class="form-control" required autocomplete="current-password">
+                        <input id="password-account" type="password" name="password_account"
+                               class="form-control @error('password_account') is-invalid @enderror"
+                               required autocomplete="current-password">
+                        @error('password_account')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="form-check">
-                        <input id="remember-login" type="checkbox" class="form-check-input">
+                        <input id="remember-login" type="checkbox" class="form-check-input" name="remember" value="1">
                         <label for="remember-login" class="form-check-label">Ghi nhớ đăng nhập</label>
                     </div>
 
@@ -48,7 +58,7 @@
                         <label for="customer-name" class="form-label">Họ và tên</label>
                         <input id="customer-name" type="text" name="customer_name"
                                class="form-control @error('customer_name') is-invalid @enderror"
-                               value="{{ old('customer_name') }}" required>
+                               value="{{ old('customer_name') }}" required autocomplete="name">
                         @error('customer_name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror

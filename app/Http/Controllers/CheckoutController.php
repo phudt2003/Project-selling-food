@@ -91,7 +91,7 @@ class CheckoutController extends Controller
     public function add_customer(Request $request)
     {
         // Kiểm tra dữ liệu gửi từ form
-        $request->validate([
+        $validated = $request->validate([
             'customer_name' => 'required|max:255',
             'customer_email' => 'required|email|max:255|unique:tbl_customers,customer_email',
             'customer_password' => 'required|min:6',
@@ -114,10 +114,28 @@ class CheckoutController extends Controller
             'customer_phone' => $request->customer_phone,
         ];
 
-        $customer_id = DB::table('tbl_customers')->insertGetId($data);
+        $data['customer_name'] = trim($validated['customer_name']);
+        $data['customer_email'] = strtolower(trim($validated['customer_email']));
+        $data['customer_password'] = Hash::make($validated['customer_password']);
+        $data['customer_phone'] = trim($validated['customer_phone']);
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        try {
+            $customer_id = DB::table('tbl_customers')->insertGetId($data, 'customer_id');
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return Redirect::back()
+                ->withInput($request->except('customer_password'))
+                ->with('error', 'Không thể tạo tài khoản lúc này. Vui lòng thử lại sau.');
+        }
 
         Session::put('customer_id', $customer_id);
-        Session::put('customer_name', $request->customer_name);
+        Session::put('customer_name', $data['customer_name']);
+        Session::forget('offline_customer');
+
+        $request->session()->regenerate();
 
         return Redirect::to('/checkout');
     }
@@ -146,20 +164,34 @@ class CheckoutController extends Controller
 
     public function save_checkout_customer(Request $request)
     {
+        $customer_id = Session::get('customer_id');
+
+        if (!$customer_id) {
+            return Redirect::to('/login-checkout')->with('error', 'Vui lòng đăng nhập để tiếp tục thanh toán.');
+        }
+
         $data = [];
+        $data['customer_id'] = $customer_id;
         $data['shipping_name'] = $request->shipping_name;
         $data['shipping_phone'] = $request->shipping_phone;
         $data['shipping_email'] = $request->shipping_email;
         $data['shipping_notes'] = $request->shipping_notes;
         $data['shipping_address'] = $request->shipping_address;
+        $data['updated_at'] = now();
 
         $shipping_id = $request->input('shipping_id');
 
         if ($shipping_id) {
-            DB::table('tbl_shipping')->where('shipping_id', $shipping_id)->update($data);
+            DB::table('tbl_shipping')
+                ->where('customer_id', $customer_id)
+                ->where('shipping_id', $shipping_id)
+                ->update($data);
             Session::put('shipping_id', $shipping_id);
         } else {
-            $shipping_id = DB::table('tbl_shipping')->insertGetId($data);
+            $data['created_at'] = now();
+            $data['is_default'] = DB::table('tbl_shipping')->where('customer_id', $customer_id)->exists() ? 0 : 1;
+
+            $shipping_id = DB::table('tbl_shipping')->insertGetId($data, 'shipping_id');
             Session::put('shipping_id', $shipping_id);
         }
 
@@ -294,7 +326,7 @@ public function momo_return(Request $request)
             'payment_message'=> $request->input('message') ?? 'Successful.', // Nếu message rỗng thì mặc định là 'Successful.'
             'created_at'     => now(),
             'updated_at'     => now()
-        ]);
+        ], 'payment_id');
 
         // Lưu thông tin đơn hàng vào bảng tbl_order
         $order_id = DB::table('tbl_order')->insertGetId([
@@ -306,7 +338,11 @@ public function momo_return(Request $request)
             'order_notes' => Session::get('order_notes'),
             'created_at'  => now(),
             'updated_at'  => now(),
-        ]);
+        ], 'order_id');
+
+        DB::table('tbl_payment')
+            ->where('payment_id', $payment_id)
+            ->update(['order_id' => $order_id]);
 
         // Lưu chi tiết đơn hàng vào bảng tbl_order_details
         foreach (Cart::content() as $item) {
@@ -416,7 +452,7 @@ public function momo_napas_return(Request $request)
             'payment_message' => $request->input('message') ?? 'Thành công',
             'created_at'      => now(),
             'updated_at'      => now(),
-        ]);
+        ], 'payment_id');
 
         // Lưu order
         $order_id = DB::table('tbl_order')->insertGetId([
@@ -428,7 +464,11 @@ public function momo_napas_return(Request $request)
             'order_notes' => Session::get('order_notes'),
             'created_at'  => now(),
             'updated_at'  => now(),
-        ]);
+        ], 'order_id');
+
+        DB::table('tbl_payment')
+            ->where('payment_id', $payment_id)
+            ->update(['order_id' => $order_id]);
 
         // Lưu chi tiết giỏ hàng
         foreach (Cart::content() as $item) {
@@ -477,7 +517,7 @@ public function momo_napas_return(Request $request)
             $payment_id = DB::table('tbl_payment')->insertGetId([
                 'payment_method' => 'COD',
                 'payment_status' => 'Đang chờ xử lý',
-            ]);
+            ], 'payment_id');
 
             $order_id = DB::table('tbl_order')->insertGetId([
                 'customer_id' => Session::get('customer_id'),
@@ -488,7 +528,11 @@ public function momo_napas_return(Request $request)
                 'order_notes' => $request->order_notes, // ✅ GHI CHÚ
                 'created_at'  => now(),
                 'updated_at'  => now(),
-            ]);
+            ], 'order_id');
+
+            DB::table('tbl_payment')
+                ->where('payment_id', $payment_id)
+                ->update(['order_id' => $order_id]);
 
             foreach (Cart::content() as $item) {
                 DB::table('tbl_order_details')->insert([
@@ -523,31 +567,47 @@ public function momo_napas_return(Request $request)
 
     public function login_customer(Request $request)
     {
-        $email = $request->email_account;
-        $password = md5($request->password_account);
+        $request->validate([
+            'email_account' => 'required|email',
+            'password_account' => 'required',
+        ], [
+            'email_account.required' => 'Vui lòng nhập email.',
+            'email_account.email' => 'Email không đúng định dạng.',
+            'password_account.required' => 'Vui lòng nhập mật khẩu.',
+        ]);
+
+        $email = strtolower(trim((string) $request->email_account));
+        $plainPassword = (string) $request->password_account;
 
         try {
             $result = DB::table('tbl_customers')
                 ->where('customer_email', $email)
-                ->where('customer_password', $password)
                 ->first();
         } catch (Throwable $exception) {
             report($exception);
 
-            if ($email === 'customer@gmail.com' && $request->password_account === '123456') {
-                Session::put('customer_id', 1);
-                Session::put('customer_name', 'Customer Demo');
-                Session::put('offline_customer', true);
-
-                return Redirect::to('/checkout');
-            }
-
-            return Redirect::to('/login-checkout')->with('error', 'Database chua san sang. Co the dung tai khoan demo: customer@gmail.com / 123456.');
+            return Redirect::to('/login-checkout')
+                ->withInput($request->only('email_account'))
+                ->with('error', 'Không thể kết nối cơ sở dữ liệu. Vui lòng thử lại sau.');
         }
 
-        if ($result) {
+        $storedPassword = $result ? (string) $result->customer_password : '';
+        $usesLaravelHash = str_starts_with($storedPassword, '$2y$')
+            || str_starts_with($storedPassword, '$argon2i$')
+            || str_starts_with($storedPassword, '$argon2id$');
+
+        $passwordMatches = $result
+            && (
+                hash_equals($storedPassword, md5($plainPassword))
+                || ($usesLaravelHash && Hash::check($plainPassword, $storedPassword))
+            );
+
+        if ($passwordMatches) {
             Session::put('customer_id', $result->customer_id);
             Session::put('customer_name', $result->customer_name);
+            Session::forget('offline_customer');
+
+            $request->session()->regenerate();
 
             // ✅ Kiểm tra xem có "url.intended" hay không
             $redirectUrl = Session::pull('url.intended', null);
@@ -559,7 +619,9 @@ public function momo_napas_return(Request $request)
             // Mặc định sau khi login xong sẽ về checkout
             return Redirect::to('/checkout');
         } else {
-            return Redirect::to('/login-checkout')->with('error', 'Sai tài khoản hoặc mật khẩu.');
+            return Redirect::to('/login-checkout')
+                ->withInput($request->only('email_account'))
+                ->with('error', 'Sai tài khoản hoặc mật khẩu.');
         }
     }
 
@@ -678,7 +740,13 @@ public function momo_napas_return(Request $request)
         ];
 
         try {
-            $shipping_id = DB::table('tbl_shipping')->insertGetId($data);
+            if ($data['is_default']) {
+                DB::table('tbl_shipping')
+                    ->where('customer_id', $customer_id)
+                    ->update(['is_default' => 0]);
+            }
+
+            $shipping_id = DB::table('tbl_shipping')->insertGetId($data, 'shipping_id');
             Session::put('shipping_id', $shipping_id);
 
             return Redirect::to('/payment')->with('message', 'Thêm địa chỉ mới thành công!');
