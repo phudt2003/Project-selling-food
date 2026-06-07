@@ -8,6 +8,23 @@ chown -R www-data:www-data storage bootstrap/cache
 : "${SESSION_DRIVER:=file}"
 : "${QUEUE_CONNECTION:=sync}"
 
+if [ -z "${REDIS_URL:-}" ]; then
+    if [ "$CACHE_DRIVER" = "redis" ]; then
+        CACHE_DRIVER=file
+        echo "REDIS_URL is not set; using CACHE_DRIVER=file."
+    fi
+
+    if [ "$SESSION_DRIVER" = "redis" ]; then
+        SESSION_DRIVER=file
+        echo "REDIS_URL is not set; using SESSION_DRIVER=file."
+    fi
+
+    if [ "$QUEUE_CONNECTION" = "redis" ]; then
+        QUEUE_CONNECTION=sync
+        echo "REDIS_URL is not set; using QUEUE_CONNECTION=sync."
+    fi
+fi
+
 if [ -z "${APP_KEY:-}" ]; then
     APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
     echo "APP_KEY was not set; generated a temporary runtime key."

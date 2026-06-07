@@ -22,6 +22,17 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        DB::table('tbl_customers')->updateOrInsert(
+            ['customer_email' => 'customer@gmail.com'],
+            [
+                'customer_name' => 'Customer Demo',
+                'customer_password' => md5('123456'),
+                'customer_phone' => '0900000001',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]
+        );
+
         $categories = [
             ['category_name' => 'Rau cu', 'category_desc' => 'Rau cu tuoi moi moi ngay'],
             ['category_name' => 'Thit heo', 'category_desc' => 'Thit heo tuoi sach'],

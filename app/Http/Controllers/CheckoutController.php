@@ -520,10 +520,16 @@ public function momo_napas_return(Request $request)
         $email = $request->email_account;
         $password = md5($request->password_account);
 
-        $result = DB::table('tbl_customers')
-            ->where('customer_email', $email)
-            ->where('customer_password', $password)
-            ->first();
+        try {
+            $result = DB::table('tbl_customers')
+                ->where('customer_email', $email)
+                ->where('customer_password', $password)
+                ->first();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return Redirect::to('/login-checkout')->with('error', 'He thong dang ket noi lai co so du lieu. Vui long thu lai sau.');
+        }
 
         if ($result) {
             Session::put('customer_id', $result->customer_id);
