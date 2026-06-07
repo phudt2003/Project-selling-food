@@ -1,14 +1,13 @@
-<!-- <!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Lỗi kết nối CSDL</title>
-</head>
-<body>
-    <div style="text-align:center; padding: 50px;">
-        <h1>⚠️ Lỗi kết nối cơ sở dữ liệu</h1>
-        <p>Chúng tôi đang gặp sự cố khi kết nối đến cơ sở dữ liệu.</p>
-        <p>Vui lòng thử lại sau vài phút.</p>
-    </div>
-</body>
-</html> -->
+@extends('welcome')
+
+@section('title', 'Fresh | Loi ket noi co so du lieu')
+
+@section('content')
+<div class="alert alert-danger">
+    <h1 class="h4">Khong ket noi duoc co so du lieu</h1>
+    <p class="mb-2">Website dang khong lay duoc du lieu tu PostgreSQL tren Render.</p>
+    @isset($error)
+        <pre class="mb-0 small text-wrap">{{ $error }}</pre>
+    @endisset
+</div>
+@endsection
