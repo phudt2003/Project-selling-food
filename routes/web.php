@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryProduct;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductDetailController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
@@ -21,7 +22,7 @@ Route::get('/khuyen-mai-soc', [HomeController::class, 'show_shock_sale_products'
 
 // Danh mục sản phẩm
 Route::get('/danh-muc-san-pham/{category_id}', [CategoryProduct::class, 'show_category_home']);
-Route::get('/chi-tiet-san-pham/{product_id}', [ProductController::class, 'details_product']);
+Route::get('/chi-tiet-san-pham/{product_id}', ProductDetailController::class);
 
 // =================== BACKEND ====================
 Route::get('/admin', [AdminController::class, 'index']);

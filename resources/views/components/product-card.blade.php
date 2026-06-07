@@ -4,7 +4,7 @@
     $salePrice = $discount > 0 ? $price - ($price * $discount / 100) : $price;
     $unit = str_replace('1 ', '', $product->product_unit);
     $isFallback = (bool) ($product->is_fallback ?? false);
-    $detailUrl = $isFallback ? '#' : URL::to('/chi-tiet-san-pham/' . $product->product_id);
+    $detailUrl = URL::to('/chi-tiet-san-pham/' . $product->product_id);
 @endphp
 
 <article class="card h-100 border-0 shadow-sm">
