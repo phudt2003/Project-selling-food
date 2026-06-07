@@ -6,25 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
+        if (Schema::hasColumn('tbl_product', 'expiration_date')) {
+            return;
+        }
+
         Schema::table('tbl_product', function (Blueprint $table) {
-            // Thêm cột 'expiration_date' với kiểu dữ liệu DATE
-            // nullable() để cho phép giá trị NULL nếu không nhập
-            $table->date('expiration_date')->nullable()->after('product_date'); // Đặt sau product_date cho hợp lý
+            $table->date('expiration_date')->nullable()->after('product_date');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
+        if (!Schema::hasColumn('tbl_product', 'expiration_date')) {
+            return;
+        }
+
         Schema::table('tbl_product', function (Blueprint $table) {
-            // Xóa cột 'expiration_date' khi rollback
             $table->dropColumn('expiration_date');
         });
     }

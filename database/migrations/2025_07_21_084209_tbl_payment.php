@@ -37,7 +37,8 @@ return new class extends Migration
             $table->timestamps();
 
             // Khóa ngoại
-            $table->foreign('order_id')->references('order_id')->on('tbl_order')->onDelete('cascade');
+            // tbl_order is created by a later migration in this project.
+            // Keep this as a plain column so a fresh deploy can migrate cleanly.
         });
     }
 

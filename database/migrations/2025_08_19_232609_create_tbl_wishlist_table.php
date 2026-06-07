@@ -1,14 +1,23 @@
 <?php
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Product extends Model
+return new class extends Migration
 {
-    protected $table = 'tbl_product';
-    protected $primaryKey = 'id';
-    public $timestamps = false;
+    public function up(): void
+    {
+        Schema::create('tbl_wishlist', function (Blueprint $table) {
+            $table->id('wishlist_id');
+            $table->unsignedInteger('customer_id')->nullable();
+            $table->unsignedInteger('product_id');
+            $table->timestamps();
+        });
+    }
 
-    protected $fillable = ['product_name', 'price', 'description'];
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('tbl_wishlist');
+    }
+};
