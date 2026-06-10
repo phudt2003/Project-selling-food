@@ -7,16 +7,16 @@
     $detailUrl = URL::to('/chi-tiet-san-pham/' . $product->product_id);
 @endphp
 
-<article class="card h-100 border-0 shadow-sm">
-    <a href="{{ $detailUrl }}" class="ratio ratio-4x3 bg-white">
+<article class="card product-card h-100 border-0 shadow-sm">
+    <a href="{{ $detailUrl }}" class="ratio ratio-4x3 bg-white product-card-image-link">
         <img src="{{ product_image_url($product->product_image ?? null) }}"
-             class="img-fluid object-fit-contain p-3"
+             class="product-card-img"
              alt="{{ $product->product_name }}">
     </a>
 
-    <div class="card-body d-flex flex-column gap-3">
+    <div class="card-body product-card-body d-flex flex-column gap-2 gap-md-3">
         <div class="d-flex justify-content-between align-items-start gap-2">
-            <h3 class="h6 mb-0">
+            <h3 class="h6 product-card-title mb-0">
                 <a class="link-dark text-decoration-none" href="{{ $detailUrl }}">
                     {{ $product->product_name }}
                 </a>
@@ -26,7 +26,7 @@
             @endif
         </div>
 
-        <div>
+        <div class="product-card-price">
             @if($discount > 0)
                 <div class="small text-secondary text-decoration-line-through">
                     {{ number_format($price) }} VND/{{ $unit }}
@@ -43,22 +43,23 @@
 
         <div class="mt-auto d-grid gap-2">
             @if($isFallback)
-                <button type="button" class="btn btn-success w-100" disabled>Thêm vào giỏ</button>
-                <button type="button" class="btn btn-outline-secondary w-100" disabled>Yêu thích</button>
+                <button type="button" class="btn btn-success product-card-btn w-100" disabled>Thêm vào giỏ</button>
+                <button type="button" class="btn btn-outline-secondary product-card-btn w-100" disabled>Yêu thích</button>
             @else
                 <form action="{{ URL::to('/save-cart') }}" method="POST">
                     @csrf
                     <input type="hidden" name="productid_hidden" value="{{ $product->product_id }}">
                     <input type="hidden" name="qty" value="1">
-                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ</button>
+                    <button type="submit" class="btn btn-success product-card-btn w-100">Thêm vào giỏ</button>
                 </form>
 
                 <form action="{{ route('wishlist.add') }}" method="POST">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->product_id }}">
-                    <button type="submit" class="btn btn-outline-secondary w-100">Yêu thích</button>
+                    <button type="submit" class="btn btn-outline-secondary product-card-btn w-100">Yêu thích</button>
                 </form>
             @endif
         </div>
     </div>
 </article>
+

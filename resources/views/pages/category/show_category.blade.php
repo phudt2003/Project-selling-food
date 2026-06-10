@@ -12,9 +12,9 @@
     </div>
 
     @if($category_by_id->count() > 0)
-        <div class="row g-4">
+        <div class="row g-2 g-md-3">
             @foreach($category_by_id as $product)
-                <div class="col-12 col-sm-6 col-xl-3">
+                <div class="col-6 col-md-4 col-lg-3">
                     @include('components.product-card', ['product' => $product])
                 </div>
             @endforeach

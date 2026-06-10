@@ -17,23 +17,23 @@
     @endif
 
     @if(!empty($wishlist) && count($wishlist) > 0)
-        <div class="row g-4">
+        <div class="row g-2 g-md-3">
             @foreach($wishlist as $item)
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <article class="card h-100 border-0 shadow-sm">
-                        <a href="{{ URL::to('/chi-tiet-san-pham/'.$item['id']) }}" class="ratio ratio-4x3 bg-white">
+                <div class="col-6 col-md-4 col-lg-3">
+                    <article class="card product-card h-100 border-0 shadow-sm">
+                        <a href="{{ URL::to('/chi-tiet-san-pham/'.$item['id']) }}" class="ratio ratio-4x3 bg-white product-card-image-link">
                             <img src="{{ product_image_url($item['image'] ?? null) }}"
-                                 class="img-fluid object-fit-contain p-3"
+                                 class="product-card-img"
                                  alt="{{ $item['name'] }}">
                         </a>
-                        <div class="card-body d-flex flex-column gap-3">
+                        <div class="card-body product-card-body d-flex flex-column gap-2 gap-md-3">
                             <div>
-                                <h2 class="h6 mb-2">
+                                <h2 class="h6 product-card-title mb-2">
                                     <a class="link-dark text-decoration-none" href="{{ URL::to('/chi-tiet-san-pham/'.$item['id']) }}">
                                         {{ $item['name'] }}
                                     </a>
                                 </h2>
-                                <div class="fw-bold text-success">
+                                <div class="fw-bold text-success product-card-price">
                                     {{ number_format($item['price']) }} VND/{{ str_replace('1 ', '', $item['unit']) }}
                                 </div>
                             </div>
@@ -43,12 +43,12 @@
                                     @csrf
                                     <input type="hidden" name="productid_hidden" value="{{ $item['id'] }}">
                                     <input type="hidden" name="qty" value="1">
-                                    <button type="submit" class="btn btn-success w-100">Thêm vào giỏ</button>
+                                    <button type="submit" class="btn btn-success product-card-btn w-100">Thêm vào giỏ</button>
                                 </form>
 
                                 <form action="{{ route('wishlist.remove', $item['id']) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="btn btn-outline-danger w-100">Xóa khỏi yêu thích</button>
+                                    <button type="submit" class="btn btn-outline-danger product-card-btn w-100">Xóa khỏi yêu thích</button>
                                 </form>
                             </div>
                         </div>
